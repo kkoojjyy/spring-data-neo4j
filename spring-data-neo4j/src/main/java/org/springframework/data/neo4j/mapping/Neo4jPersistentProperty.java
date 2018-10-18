@@ -50,6 +50,7 @@ import org.springframework.data.neo4j.annotation.QueryResult;
  * @author Luanne Misquitta
  * @author Mark Angrish
  * @author Mark Paluch
+ * @author Michael J. Simons
  * @since 4.0.0
  */
 public class Neo4jPersistentProperty extends AnnotationBasedPersistentProperty<Neo4jPersistentProperty> {
@@ -74,12 +75,7 @@ public class Neo4jPersistentProperty extends AnnotationBasedPersistentProperty<N
 			logger.warn("Owning ClassInfo is null for property: {}", property);
 		}
 		if ((owningClassInfo != null && owningClassInfo.getUnderlyingClass() != null
-				&& simpleTypeHolder.isSimpleType(owningClassInfo.getUnderlyingClass())) || owner.getType().isEnum()) { // TODO
-																																																								// refactor
-																																																								// all
-																																																								// these
-																																																								// null
-																																																								// checks
+				&& simpleTypeHolder.isSimpleType(owningClassInfo.getUnderlyingClass())) || owner.getType().isEnum()) {
 			this.isIdProperty = false;
 		} else {
 			this.isIdProperty = resolveWhetherIdProperty(owningClassInfo, property);
@@ -143,6 +139,6 @@ public class Neo4jPersistentProperty extends AnnotationBasedPersistentProperty<N
 
 	@Override
 	protected Association<Neo4jPersistentProperty> createAssociation() {
-		return new Association<Neo4jPersistentProperty>(this, null);
+		return new Association<>(this, null);
 	}
 }
