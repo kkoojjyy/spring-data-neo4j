@@ -27,6 +27,7 @@ import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.neo4j.mapping.MetaDataProvider;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
@@ -60,7 +61,7 @@ public class SharedSessionCreator {
 	 */
 	public static Session createSharedSession(SessionFactory sessionFactory) {
 		return (Session) Proxy.newProxyInstance(SharedSessionCreator.class.getClassLoader(),
-				new Class<?>[] { Session.class }, new SharedSessionInvocationHandler(sessionFactory));
+				new Class<?>[] { Session.class, MetaDataProvider.class }, new SharedSessionInvocationHandler(sessionFactory));
 	}
 
 	/**
@@ -90,6 +91,8 @@ public class SharedSessionCreator {
 			} else if (method.getName().equals("toString")) {
 				// Deliver toString without touching a target Session.
 				return "Shared Session proxy for target factory [" + sessionFactory + "]";
+			} else if (method.getName().equals("getMetaData")) {
+				return this.sessionFactory.metaData();
 			} else if (method.getName().equals("beginTransaction")) {
 				throw new IllegalStateException(
 						"Not allowed to create transaction on shared Session - " + "use Spring transactions instead");
